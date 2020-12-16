@@ -2,7 +2,7 @@ import PIL.ImageDraw as ImageDraw
 import PIL.Image as Image
 from random import choice 
 
-class RenderingEngine:
+class RenderingEnginePIL:
 
 	def __init__(self, width = 800, height = 800):
 		self.width = width
