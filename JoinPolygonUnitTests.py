@@ -12,8 +12,8 @@ class JoinPolygonUnitTests(unittest.TestCase):
 	# def test_hexagon_hexagon(self):
 	# 	self.perform_test_n([Hexagon, Hexagon], [(0, 0, 0)], [len(Hexagon.angles) - 1, len(Hexagon.angles) - 1], True, False)
 
-	# def test_bowtie_hexagon_pentagon(self):
-	# 	self.perform_test_n([Bowtie, Hexagon, Pentagon], [(0, 2, 0), (1, 4, 0)], None, False, False)
+	def test_bowtie_hexagon_pentagon(self):
+		self.perform_test_n([Bowtie, Hexagon, Pentagon], [(0, 2, 0), (1, 4, 0)], None, False, True)
 
 	# def test_decagon_bowtie(self):
 	# 	self.perform_test_n([Decagon, Bowtie], [(0, 5, 0)], [8, 4], True, False)
@@ -31,8 +31,8 @@ class JoinPolygonUnitTests(unittest.TestCase):
 	# def test_decagon_decagon_decagon(self):
 	# 	self.perform_test_n([Decagon, Decagon, Decagon], [(0, 0, 0), (0, 1, 0)], [], False, False)
 
-	def test_pentagon_decagon_decagon(self):
-		self.perform_test_n([Pentagon, Decagon, Decagon], [(0, 0, 0), (0, 1, 0)], [], False, True)
+	# def test_pentagon_decagon_decagon(self):
+	# 	self.perform_test_n([Pentagon, Decagon, Decagon], [(0, 0, 0), (0, 1, 0)], [], False, True)
 
 	# def test_decagon_bowtie_pentagon(self):
 	# 	self.perform_test_n([Decagon, Bowtie, Pentagon], [(0, 0, 0), (0, 2, 0)], [], False, False)

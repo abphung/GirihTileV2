@@ -1,7 +1,8 @@
-from math import *
+from math import cos, sin, radians
 
 class Node:
 
+	@staticmethod
 	def create(angle: int, relative_to_node: 'Node', node_set: 'NodeSet') -> 'Node':
 		x = relative_to_node.x + node_set.scale*cos(radians(angle))
 		y = relative_to_node.y + node_set.scale*sin(radians(angle))
@@ -30,9 +31,7 @@ class Node:
 
 	def intersects(self, relative_angle: int) -> bool:
 		for closed_angle in self.closed_angles:
-			print(closed_angle, relative_angle)
 			if closed_angle[0] < relative_angle < closed_angle[1] or closed_angle[0] < relative_angle - 360 < closed_angle[1]:
-				# print(closed_angle[0], relative_angle, closed_angle[1])
 				return True
 
 		return False
@@ -44,4 +43,4 @@ class Node:
 		return False
 
 	def pair(self, x_off, y_off):
-		return (self.x + x_off, self.y + y_off)
+		return (self.x + x_off, y_off - self.y)
