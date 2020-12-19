@@ -21,8 +21,10 @@ class Edge:
 		self.color = None
 		self.polygon1 = None
 		self.polygon2 = None
+		self.rel_angle = None
 
 	# https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+	@staticmethod
 	def ccw(A: 'Node', B: 'Node', C: 'Node') -> bool:
 		return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
 
@@ -35,9 +37,20 @@ class Edge:
 		return does_intersect
 
 	#returns int in range [0, 360]
-	def angle(self):
-		# instead of doing node1 - node2 do node2 - node1 + 180 so all angles are positive
-		return round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)) + 180)
+	def relative_angle(self):
+		if self.rel_angle != None:
+			return self.rel_angle
+		else:
+			# instead of doing node1 - node2 do node2 - node1 + 180 so all angles are positive
+			return round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)) + 180)
+
+	#returns int in range [0, 360]
+	def offset_relative_angle_clockwise(self, abs_value: int) -> int:
+		return (self.relative_angle() + 180 + abs_value)%360
+
+	#returns int in range [0, 360]
+	def offset_relative_angle_counterclockwise(self, abs_value: int) -> int:
+		return (self.relative_angle() + 180 - abs_value)%360
 
 	def reverse(self):
 		self.reversed = not self.reversed

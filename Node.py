@@ -30,14 +30,16 @@ class Node:
 		return hash((self.x, self.y))
 
 	def intersects(self, relative_angle: int) -> bool:
-		for closed_angle in self.closed_angles:
-			if closed_angle[0] < relative_angle < closed_angle[1] or closed_angle[0] < relative_angle - 360 < closed_angle[1]:
-				return True
+		for start_rel_angle, end_rel_angle in self.closed_angles:
+			if start_rel_angle < end_rel_angle:
+				return start_rel_angle < relative_angle < end_rel_angle
+			elif start_rel_angle > end_rel_angle:
+				return relative_angle > start_rel_angle or relative_angle < end_rel_angle
+			else:
+				return False
 
-		return False
-
-	def invalid_resultant_angle(self, additional_angle: int) -> bool:
-		if 0 < 360 - sum(map(lambda x: x[1] - x[0], self.closed_angles)) - additional_angle < 72:
+	def invalid_resultant_angle(self, absolute_angle: int) -> bool:
+		if 0 < 360 - sum(map(lambda x: x[1] - x[0], self.closed_angles)) - absolute_angle < 72:
 			return True
 
 		return False

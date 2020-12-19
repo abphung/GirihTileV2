@@ -50,19 +50,26 @@ class Polygon:
 		joining_edges = []
 		valid_edges = []
 		for i in range(angles_len):
-			angle_in_degrees = PolygonType.angles[(start_index + i)%angles_len]
-			new_angle = (past_edge.angle() + 180)%360 - angle_in_degrees
+			angle_abs_value = PolygonType.angles[(start_index + i)%angles_len]
+			new_relative_angle = past_edge.offset_relative_angle_clockwise(angle_abs_value)
 			new_node1 = past_edge.node2
-			_, new_node2 = Node.create(new_angle, new_node1, node_set)
-			is_new_edge, new_edge = Edge.create(new_node1, new_node2, edge_set)
 
+			#validate
+			edge_angle_intersects, node_resultant_angle_too_small, edge_intersects = False, False, False
+
+			#check valid node. if new node it is always valid
+			is_new_node, new_node2 = Node.create(new_relative_angle, new_node1, node_set)
+			if not is_new_node:
+				edge_angle_intersects = new_node1.intersects(new_relative_angle)
+				node_resultant_angle_too_small = new_node1.invalid_resultant_angle(angle_abs_value)
+
+			#check valid edge. If it is an existing edge it is always valid
+			is_new_edge, new_edge = Edge.create(new_node1, new_node2, edge_set)
 			if not is_new_edge:
 				joining_edges.append(new_edge)
-
-			edge_intersects = edge_set.intersects(new_edge)
-			edge_angle_intersects = new_node1.intersects(new_angle)
-			node_resultant_angle_too_small = new_node1.invalid_resultant_angle(angle_in_degrees)
-
+			else:
+				edge_intersects = edge_set.intersects(new_edge)
+			
 			if edge_intersects or edge_angle_intersects or node_resultant_angle_too_small:
 
 				for joining_edge in joining_edges:
@@ -71,7 +78,7 @@ class Polygon:
 					starting_edge.reverse()
 				return (None, None)
 				
-			new_node1.closed_angles.append((new_angle, (past_edge.angle() + 180)%360))
+			new_node1.closed_angles.append((past_edge.relative_angle(), new_relative_angle))
 			valid_edges.append(new_edge)
 			past_edge = new_edge
 
