@@ -38,11 +38,10 @@ class Node:
 			else:
 				return False
 
-	def invalid_resultant_angle(self, absolute_angle: int) -> bool:
-		if 0 < 360 - sum(map(lambda x: x[1] - x[0], self.closed_angles)) - absolute_angle < 72:
-			return True
-
-		return False
+	def min_gap(self, start, end):
+		sorted_angles = sorted(self.closed_angles + [(start, end)], key=lambda start, end: start)
+		length = len(sorted_angles)
+		return min([sorted_angles[(i + 1)%length][0] - sorted_angles[i][1] for i in range(length)])
 
 	def pair(self, x_off, y_off):
 		return (self.x + x_off, y_off - self.y)

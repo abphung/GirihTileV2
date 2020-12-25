@@ -48,11 +48,11 @@ class JoinPolygonUnitTests(unittest.TestCase):
 		is_invalid_edge_present = False
 		for PolygonType in polygon_types[1:]:
 			polygon1_index, polygon1_side_index, polygon2_side_index = joining_edges_collection.pop(0)
-			joining_edges, valid_new_edges = Polygon.place(PolygonType, polygons[polygon1_index].edges[polygon1_side_index], polygon2_side_index, node_set, edge_set)
+			valid_new_edges = Polygon.place(PolygonType, polygons[polygon1_index].edges[polygon1_side_index], polygon2_side_index, node_set, edge_set)
 			if valid_new_edges == None:
 				is_invalid_edge_present = True
 				break
-			polygons.append(PolygonType(joining_edges, valid_new_edges, node_set, edge_set))
+			polygons.append(PolygonType(valid_new_edges, node_set, edge_set))
 
 		if should_draw:
 			renderingEngine.draw(polygons)

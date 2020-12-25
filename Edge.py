@@ -1,10 +1,9 @@
 from Node import Node
 from typing import List
-from math import *
-
+from math import degrees, atan2
 class Edge:
 
-	@staticmethod
+	@staticmethod	
 	def create(node1: Node, node2: Node, edge_set: 'EdgeSet' = None) -> [bool, 'Edge']:
 		existing_edge = edge_set.try_get(node1, node2)
 		if existing_edge != None:
@@ -12,16 +11,11 @@ class Edge:
 		new_edge = Edge(node1, node2)
 		return (True, new_edge)
 
-	# edges are pointed so that polygon1 is on the left and polygon2 is on the right
 	def __init__(self, node1: 'Node', node2: 'Node'):
 		self.node1 = node1
 		self.node2 = node2
-		self.reversed = False
-		self.open = True
 		self.color = None
-		self.polygon1 = None
-		self.polygon2 = None
-		self.rel_angle = None
+		self.relative_angle = round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)) + 180)
 
 	# https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 	@staticmethod
@@ -37,27 +31,12 @@ class Edge:
 		return does_intersect
 
 	#returns int in range [0, 360]
-	def relative_angle(self):
-		if self.rel_angle != None:
-			return self.rel_angle
-		else:
-			# instead of doing node1 - node2 do node2 - node1 + 180 so all angles are positive
-			return round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)) + 180)
-
-	#returns int in range [0, 360]
 	def offset_relative_angle_clockwise(self, abs_value: int) -> int:
-		return (self.relative_angle() + 180 + abs_value)%360
+		return (self.relative_angle + 180 + abs_value)%360
 
 	#returns int in range [0, 360]
 	def offset_relative_angle_counterclockwise(self, abs_value: int) -> int:
-		return (self.relative_angle() + 180 - abs_value)%360
-
-	def reverse(self):
-		self.reversed = not self.reversed
-		self.node1, self.node2 = self.node2, self.node1
-
-	def close(self):
-		self.open = False
+		return (self.relative_angle + 180 - abs_value)%360
 
 	def __str__(self):
 		return str((self.node1, self.node2))

@@ -55,7 +55,8 @@ class EdgeSet:
 		resized_1_x = self.resize(edge.node1.x)
 		resized_1_y = self.resize(edge.node1.y)
 		resized_2_x = self.resize(edge.node2.x)
-		resized_2_y = self.resize(edge.node2.y) 
-		self.edges[resized_1_x][resized_1_y].append(edge)
+		resized_2_y = self.resize(edge.node2.y)
+		if edge not in self.edges[resized_1_x][resized_1_y]:
+			self.edges[resized_1_x][resized_1_y].append(edge)
 		if resized_1_x != resized_2_x or resized_1_y != resized_2_y:
 			self.edges[resized_1_y][resized_2_y].append(edge)
