@@ -39,7 +39,7 @@ class Node:
 				return False
 
 	def min_gap(self, start, end):
-		sorted_angles = sorted(self.closed_angles + [(start, end)], key=lambda start, end: start)
+		sorted_angles = sorted(self.closed_angles + [(start, end)], key=lambda this_range: this_range[0])
 		length = len(sorted_angles)
 		return min([sorted_angles[(i + 1)%length][0] - sorted_angles[i][1] for i in range(length)])
 

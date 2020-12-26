@@ -9,6 +9,7 @@ class EdgeSet:
 		x_width = ceil(width/self.scale)
 		y_height = ceil(height/self.scale)
 		self.edges = [[[] for x in range(x_width)] for y in range(y_height)]
+		self.open_edges = []
 
 	def neighbors(self, node: 'Node'):
 		x, y = self.resize(node.x), self.resize(node.y)
@@ -28,8 +29,8 @@ class EdgeSet:
 		for location in self.neighbors(edge.node1) + self.neighbors(edge.node2):
 			if location not in seen_locations:
 				x, y = location
-				for other_edges in self.edges[x][y]:
-					if edge.intersects(other_edges):
+				for other_edge in self.edges[x][y]:
+					if edge is not other_edge and edge.intersects(other_edge):
 						return True
 
 		return False
@@ -45,18 +46,18 @@ class EdgeSet:
 		existing_edges = self.edges[resized_1_x][resized_1_y]
 		existing_edges += self.edges[resized_2_x][resized_2_y]
 		for existing_edge in existing_edges:
-			if node2 == existing_edge.node1 and node1 == existing_edge.node2:
-				existing_edge.reverse()
-				return existing_edge
-			elif node2 == existing_edge.node2 and node1 == existing_edge.node1:
+			if node2 == existing_edge.node1 and node1 == existing_edge.node2 or\
+				node2 == existing_edge.node2 and node1 == existing_edge.node1:
 				return existing_edge
 
-	def add(self, edge: 'Edge'):
+	def try_add(self, edge: 'Edge'):
 		resized_1_x = self.resize(edge.node1.x)
 		resized_1_y = self.resize(edge.node1.y)
 		resized_2_x = self.resize(edge.node2.x)
 		resized_2_y = self.resize(edge.node2.y)
-		if edge not in self.edges[resized_1_x][resized_1_y]:
+		should_add = edge not in self.edges[resized_1_x][resized_1_y]
+		if should_add:
 			self.edges[resized_1_x][resized_1_y].append(edge)
-		if resized_1_x != resized_2_x or resized_1_y != resized_2_y:
-			self.edges[resized_1_y][resized_2_y].append(edge)
+			if resized_1_x != resized_2_x or resized_1_y != resized_2_y:
+				self.edges[resized_1_y][resized_2_y].append(edge)
+		return should_add

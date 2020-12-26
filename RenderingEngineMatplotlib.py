@@ -15,7 +15,7 @@ class RenderingEngineMatplotlib:
 		plt.xlim([0, self.width])
 		plt.ylim([0, self.height])
 		for polygon in polygons:
-			points = list(map(lambda edge: edge.node2.pair(self.x_offset, self.y_offset) if edge.polygon1 is polygon else edge.node1.pair(self.x_offset, self.y_offset), polygon.edges))
+			points = list(map(lambda node: node.pair(self.x_offset, self.y_offset), polygon.ordered_nodes))
 			color = (choice(range(255)), choice(range(255)), choice(range(255)))
 			x, y = map(list, zip(*points))
 			plt.fill(x, y, color)

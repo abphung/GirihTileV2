@@ -13,7 +13,7 @@ class Polygon:
 
 	def __init__(self, valid_edges: List['Edge'], node_set: 'NodeSet', edge_set: 'EdgeSet'):
 		self.edges = valid_edges
-		self.open_edges = []
+		self.ordered_nodes = []
 		for edge in valid_edges:
 			# if edge in joining_edges:
 			# 	if edge in edge.polygon1.open_edges:
@@ -28,22 +28,23 @@ class Polygon:
 			# else:
 			node_set.add(edge.node1)
 			node_set.add(edge.node2)
-			edge_set.add(edge)
-			self.open_edges.append(edge)		
-
-	def get_open_edge(self):
-		return choice(self.open_edges)
+			if edge_set.try_add(edge):
+				edge_set.open_edges.append(edge)
+				self.ordered_nodes.append(edge.node1)
+			else:
+				edge_set.open_edges.remove(edge)
+				self.ordered_nodes.append(edge.node2)
 
 	@staticmethod
-	def place(PolygonType, starting_edge, start_index, node_set, edge_set):
+	def place(PolygonType, starting_edge, start_index, node_set, edge_set, allow_collisions = False):
 		angles_len = len(PolygonType.angles)
 		#past_edge = starting_edge
-		cur_edge = starting_edge
+		cur_relative_angle = (starting_edge.relative_angle + 180)%360
 		cur_node = starting_edge.node1
 		valid_edges = []
 		for i in range(angles_len):
 			angle_abs_value = PolygonType.angles[(start_index + i)%angles_len]
-			new_relative_angle = cur_edge.offset_relative_angle_clockwise(angle_abs_value)
+			new_relative_angle = (cur_relative_angle + 180 + angle_abs_value)%360#cur_edge.offset_relative_angle_clockwise(angle_abs_value)
 
 			#validate
 			edge_angle_intersects, node_resultant_angle_too_small, edge_intersects = False, False, False
@@ -52,20 +53,20 @@ class Polygon:
 			is_new_node, new_node = Node.create(new_relative_angle, cur_node, node_set)
 			if not is_new_node:
 				edge_angle_intersects = cur_node.intersects(new_relative_angle)
-				node_resultant_angle_too_small = 0 < cur_node.min_gap((cur_edge.relative_angle, new_relative_angle)) < 72
+				node_resultant_angle_too_small = 0 < cur_node.min_gap(cur_relative_angle, new_relative_angle) < 72
 
 			#check valid edge. If it is an existing edge it is always valid
 			is_new_edge, new_edge = Edge.create(cur_node, new_node, edge_set)
 			if is_new_edge:
 				edge_intersects = edge_set.intersects(new_edge)
 
-			if edge_intersects or edge_angle_intersects or node_resultant_angle_too_small:
+			if not allow_collisions and (edge_intersects or edge_angle_intersects or node_resultant_angle_too_small):
 				return None
 				
-			cur_node.closed_angles.append((cur_edge.relative_angle, new_relative_angle))
+			cur_node.closed_angles.append((cur_relative_angle, new_relative_angle))
 			valid_edges.append(new_edge)
 
-			cur_edge = new_edge
+			cur_relative_angle = new_relative_angle
 			cur_node = new_node
 
 		return valid_edges

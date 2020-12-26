@@ -28,7 +28,7 @@ class TilingEngine:
 				found_valid_polygon = False
 				for possibility in possibilities:
 					NewPolygonType, start_index = possibility
-					joining_edges, valid_new_edges = Polygon.place(NewPolygonType, cur_edge, start_index)
+					joining_edges, valid_new_edges = Polygon.place(NewPolygonType, cur_edge, start_index, node_set, edge_set)
 					if valid_new_edges != None:
 						new_polygon = NewPolygonType(joining_edges, valid_new_edges)
 						polygons.append(new_polygon)
