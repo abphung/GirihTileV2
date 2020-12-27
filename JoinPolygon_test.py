@@ -31,6 +31,7 @@ class JoinPolygonUnitTests(unittest.TestCase):
 		self.perform_test_n([Pentagon, Rhombus, Pentagon, Decagon, Bowtie], [(0, 2, 1), (0, 3, 0), (0, 1, 0), (2, 0, 1)], [], False)
 		self.perform_test_n([Pentagon, Rhombus, Pentagon, Decagon, Bowtie], [(0, 2, 1), (0, 3, 0), (0, 1, 0), (1, 2, 2)], [], False)
 
+	#overlap
 	def test_decagon_decagon_decagon(self):
 		self.perform_test_n([Decagon, Decagon, Decagon], [(0, 0, 0), (0, 1, 0)], [], False)
 

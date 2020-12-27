@@ -31,12 +31,11 @@ class Node:
 
 	def intersects(self, relative_angle: int) -> bool:
 		for start_rel_angle, end_rel_angle in self.closed_angles:
-			if start_rel_angle < end_rel_angle:
-				return start_rel_angle < relative_angle < end_rel_angle
-			elif start_rel_angle > end_rel_angle:
-				return relative_angle > start_rel_angle or relative_angle < end_rel_angle
-			else:
-				return False
+			if start_rel_angle < end_rel_angle and start_rel_angle < relative_angle < end_rel_angle:
+				return True
+			elif start_rel_angle > end_rel_angle and (relative_angle > start_rel_angle or relative_angle < end_rel_angle):
+				return True
+		return False
 
 	def min_gap(self, start, end):
 		sorted_angles = sorted(self.closed_angles + [(start, end)], key=lambda this_range: this_range[0])
