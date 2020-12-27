@@ -1,4 +1,4 @@
-from random import *
+from random import choice, shuffle
 from PolygonTypes import *
 from NodeSet import NodeSet
 from EdgeSet import EdgeSet
@@ -17,7 +17,7 @@ class TilingEngine:
 		init_polygon = Polygon.create(InitPolygonType, node_set, edge_set)
 		polygons.append(init_polygon)
 		open_polygons = [init_polygon]
-		for i in range(0):
+		for _ in range(0):
 			cur_polygon = open_polygons.pop(0)
 			while cur_polygon.open_edges == []:
 				cur_polygon = open_polygons.pop(0)

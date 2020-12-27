@@ -4,8 +4,8 @@ class Node:
 
 	@staticmethod
 	def create(angle: int, relative_to_node: 'Node', node_set: 'NodeSet') -> 'Node':
-		x = relative_to_node.x + node_set.scale*cos(radians(angle))
-		y = relative_to_node.y + node_set.scale*sin(radians(angle))
+		x = round(relative_to_node.x + node_set.scale*cos(radians(angle)))
+		y = round(relative_to_node.y + node_set.scale*sin(radians(angle)))
 		existing_node = node_set.try_get(x, y)
 		if existing_node != None:
 			return (False, existing_node)
@@ -24,7 +24,7 @@ class Node:
 		return self.__str__()
 
 	def __eq__(self, obj):
-		return obj != None and round(self.x) == round(obj.x) and round(self.y) == round(obj.y)
+		return obj != None and self.x == obj.x and self.y == obj.y
 
 	def __hash__(self):
 		return hash((self.x, self.y))
@@ -41,7 +41,8 @@ class Node:
 	def min_gap(self, start, end):
 		sorted_angles = sorted(self.closed_angles + [(start, end)], key=lambda this_range: this_range[0])
 		length = len(sorted_angles)
-		return min([sorted_angles[(i + 1)%length][0] - sorted_angles[i][1] for i in range(length)])
+		#subtract 1 so non gaps(which will have size 0) will not be considered in the min
+		return min([(sorted_angles[(i + 1)%length][0] - sorted_angles[i][1] - 1)%360 + 1 for i in range(length)])
 
 	def pair(self, x_off, y_off):
 		return (self.x + x_off, y_off - self.y)

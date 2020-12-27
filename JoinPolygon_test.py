@@ -14,6 +14,7 @@ class JoinPolygonUnitTests(unittest.TestCase):
 	def test_hexagon_hexagon(self):
 		self.perform_test_n([Hexagon, Hexagon], [(0, 0, 0)], [len(Hexagon.angles) - 1, len(Hexagon.angles) - 1], True)
 
+	#angle too small
 	def test_bowtie_hexagon_pentagon(self):
 		self.perform_test_n([Bowtie, Hexagon, Pentagon], [(0, 2, 0), (1, 4, 0)], None, False)
 
@@ -40,7 +41,7 @@ class JoinPolygonUnitTests(unittest.TestCase):
 		self.perform_test_n([Decagon, Bowtie, Pentagon], [(0, 0, 0), (0, 2, 0)], [], False)
 
 	def test_bowtie_bowtie_bowtie(self):
-		self.perform_test_n([Decagon, Bowtie, Pentagon], [(0, 0, 0), (0, 2, 0)], [], False)
+		self.perform_test_n([Bowtie, Bowtie, Bowtie], [(0, 0, 0), (0, 2, 4)], [], True)
 
 	def perform_test_n(self, polygon_types, joining_edges_collection, polygons_open_count, valid):
 		gettrace = getattr(sys, 'gettrace', None)
