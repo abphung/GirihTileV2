@@ -44,4 +44,4 @@ class Node:
 		return min([(sorted_angles[(i + 1)%length][0] - sorted_angles[i][1] - 1)%360 + 1 for i in range(length)])
 
 	def pair(self, x_off, y_off):
-		return (self.x + x_off, y_off - self.y)
+		return (self.x + x_off, self.y + y_off)

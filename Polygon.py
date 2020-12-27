@@ -39,10 +39,10 @@ class Polygon:
 			edge_angle_intersects, node_resultant_angle_too_small, edge_intersects = False, False, False
 
 			#check valid node. if new node it is always valid
-			is_new_node, new_node = Node.create(new_relative_angle, cur_node, node_set)
-			if not is_new_node:
-				edge_angle_intersects = new_node.intersects(new_relative_angle)
-				node_resultant_angle_too_small = 0 < new_node.min_gap(*angle_range) < 72
+			_, new_node = Node.create(new_relative_angle, cur_node, node_set)
+			if node_set.try_get(cur_node.x, cur_node.y):
+				edge_angle_intersects = cur_node.intersects(new_relative_angle)
+				node_resultant_angle_too_small = 0 < cur_node.min_gap(*angle_range) < 72
 
 			#check valid edge. If it is an existing edge it is always valid
 			is_new_edge, new_edge = Edge.create(cur_node, new_node, edge_set)
@@ -55,7 +55,7 @@ class Polygon:
 					return None
 
 			#This is a bug. if we fail we need to revert this
-			new_node.closed_angles.append(angle_range)
+			cur_node.closed_angles.append(angle_range)
 			
 			valid_edges.append(new_edge)
 
