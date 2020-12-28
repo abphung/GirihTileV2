@@ -15,7 +15,7 @@ class Edge:
 		self.node1 = node1
 		self.node2 = node2
 		self.color = None
-		self.relative_angle = round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)) + 180)
+		self.relative_angle = round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)))%360
 
 	# https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 	@staticmethod
@@ -29,14 +29,6 @@ class Edge:
 			Edge.ccw(self.node1, self.node2, other_edge.node1) != Edge.ccw(self.node1, self.node2, other_edge.node2)
 
 		return does_intersect
-
-	#returns int in range [0, 360]
-	def offset_relative_angle_clockwise(self, abs_value: int) -> int:
-		return (self.relative_angle + 180 + abs_value)%360
-
-	#returns int in range [0, 360]
-	def offset_relative_angle_counterclockwise(self, abs_value: int) -> int:
-		return (self.relative_angle + 180 - abs_value)%360
 
 	def __str__(self):
 		return str((self.node1, self.node2))

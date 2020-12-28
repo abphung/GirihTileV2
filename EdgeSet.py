@@ -9,7 +9,6 @@ class EdgeSet:
 		x_width = ceil(width/self.scale)
 		y_height = ceil(height/self.scale)
 		self.edges = [[[] for x in range(x_width)] for y in range(y_height)]
-		self.open_edges = []
 
 	def neighbors(self, node: 'Node'):
 		x, y = self.resize(node.x), self.resize(node.y)
@@ -52,5 +51,19 @@ class EdgeSet:
 		if should_add:
 			self.edges[resized_1_x][resized_1_y].append(edge)
 			if resized_1_x != resized_2_x or resized_1_y != resized_2_y:
-				self.edges[resized_1_y][resized_2_y].append(edge)
+				self.edges[resized_2_x][resized_2_y].append(edge)
 		return should_add
+
+	def try_remove(self, edge: 'Edge'):
+		resized_1_x = self.resize(edge.node1.x)
+		resized_1_y = self.resize(edge.node1.y)
+		resized_2_x = self.resize(edge.node2.x)
+		resized_2_y = self.resize(edge.node2.y)
+		removed = False
+		if edge in self.edges[resized_1_x][resized_1_y]:
+			self.edges[resized_1_y][resized_2_y].remove(edge)
+			removed = True
+		if edge in self.edges[resized_2_x][resized_2_y]:
+			self.edges[resized_2_x][resized_2_y].remove(edge)
+			removed = True
+		return removed

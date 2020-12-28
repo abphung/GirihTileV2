@@ -6,30 +6,36 @@ from random import choice
 class Polygon:
 
 	@staticmethod
-	def create(PolygonType, node_set, edge_set):
-		init_edge = Edge(Node(0, 0), Node(0, node_set.scale))
-		valid_new_edges = Polygon.place(PolygonType, init_edge, 0, node_set, edge_set)
-		return PolygonType(valid_new_edges, node_set, edge_set)
+	def create(PolygonType, polygon_set: 'PolygonSet'):
+		init_edge = Edge(Node(0, 0), Node(0, polygon_set.node_set.scale))
+		valid_new_edges = Polygon.place(PolygonType, init_edge, 0, polygon_set)
+		return PolygonType(valid_new_edges, polygon_set)
 
-	def __init__(self, valid_edges: List['Edge'], node_set: 'NodeSet', edge_set: 'EdgeSet'):
+	def __init__(self, valid_edges: List['Edge'], polygon_set: 'PolygonSet'):
+		node_set = polygon_set.node_set
+		edge_set = polygon_set.edge_set
+
 		self.edges = valid_edges
 		self.ordered_nodes = []
 		for edge in valid_edges:
 			node_set.add(edge.node1)
 			node_set.add(edge.node2)
 			if edge_set.try_add(edge):
-				edge_set.open_edges.append(edge)
+				polygon_set.open_edges[edge] = self
 				self.ordered_nodes.append(edge.node1)
 			else:
-				edge_set.open_edges.remove(edge)
+				polygon_set.open_edges.pop(edge)
 				self.ordered_nodes.append(edge.node2)
 
 	@staticmethod
-	def place(PolygonType, starting_edge, start_index, node_set, edge_set, allow_collisions = False):
+	def place(PolygonType, starting_edge, start_index, polygon_set: 'PolygonSet', allow_collisions = False):
+		node_set = polygon_set.node_set
+		edge_set = polygon_set.edge_set
 		angles_len = len(PolygonType.angles)
-		cur_relative_angle = (starting_edge.relative_angle + 180)%360
+		cur_relative_angle = starting_edge.relative_angle
 		cur_node = starting_edge.node1
 		valid_edges = []
+		reverse_on_failure = []
 		for i in range(angles_len):
 			angle_abs_value = PolygonType.angles[(start_index + i)%angles_len]
 			#adding 180 to flip angle. cur_relative_angle is relative to previous starting node
@@ -52,10 +58,12 @@ class Polygon:
 			if edge_intersects or edge_angle_intersects or node_resultant_angle_too_small:
 				#do not combine condition check with line above so we can set breakpoint in here
 				if not allow_collisions:
+					for operation, argument in reverse_on_failure:
+						operation(argument)
 					return None
 
-			#This is a bug. if we fail we need to revert this
 			cur_node.closed_angles.append(angle_range)
+			reverse_on_failure.append((cur_node.closed_angles.remove, angle_range))
 			
 			valid_edges.append(new_edge)
 

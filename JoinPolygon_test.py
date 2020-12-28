@@ -3,6 +3,7 @@ from RenderingEngineMatplotlib import RenderingEngineMatplotlib
 from PolygonTypes import *
 from NodeSet import NodeSet
 from EdgeSet import EdgeSet
+from PolygonSet import PolygonSet
 import sys
 
 class JoinPolygonUnitTests(unittest.TestCase):
@@ -50,16 +51,17 @@ class JoinPolygonUnitTests(unittest.TestCase):
 
 		node_set = NodeSet(100)
 		edge_set = EdgeSet(1000, 1000, node_set)
-		polygons = [Polygon.create(polygon_types[0], node_set, edge_set)]
+		polygon_set = PolygonSet(node_set, edge_set)
+		polygons = [Polygon.create(polygon_types[0], polygon_set)]
 		renderingEngine = RenderingEngineMatplotlib(1000, 1000)
 		is_invalid_edge_present = False
 		for PolygonType in polygon_types[1:]:
 			polygon1_index, polygon1_side_index, polygon2_side_index = joining_edges_collection.pop(0)
-			valid_new_edges = Polygon.place(PolygonType, polygons[polygon1_index].edges[polygon1_side_index], polygon2_side_index, node_set, edge_set, allow_collisions=is_debug)
+			valid_new_edges = Polygon.place(PolygonType, polygons[polygon1_index].edges[polygon1_side_index], polygon2_side_index, polygon_set, allow_collisions=is_debug)
 			if valid_new_edges == None:
 				is_invalid_edge_present = True
 				break
-			polygons.append(PolygonType(valid_new_edges, node_set, edge_set))
+			polygons.append(PolygonType(valid_new_edges, polygon_set))
 
 		
 		if is_debug:
