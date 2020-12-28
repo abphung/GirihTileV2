@@ -14,24 +14,17 @@ class EdgeSet:
 	def neighbors(self, node: 'Node'):
 		x, y = self.resize(node.x), self.resize(node.y)
 		locations = [(x, y)]
-		if x > 0:
-			locations.append((x - 1, y))
-		if x < self.width - 1:
-			locations.append((x + 1, y))
-		if x > 0:
-			locations.append((x, y - 1))
-		if x < self.height - 1:
-			locations.append((x, y + 1))
+		locations.append((x - 1, y))
+		locations.append((x + 1, y))
+		locations.append((x, y - 1))
+		locations.append((x, y + 1))
 		return locations
 
 	def intersects(self, edge: 'Edge'):
-		seen_locations = set()
-		for location in self.neighbors(edge.node1) + self.neighbors(edge.node2):
-			if location not in seen_locations:
-				x, y = location
-				for other_edge in self.edges[x][y]:
-					if edge is not other_edge and edge.intersects(other_edge):
-						return True
+		for x, y in set(self.neighbors(edge.node1) + self.neighbors(edge.node2)):
+			for other_edge in self.edges[x][y]:
+				if edge is not other_edge and edge.intersects(other_edge):
+					return True
 
 		return False
 
