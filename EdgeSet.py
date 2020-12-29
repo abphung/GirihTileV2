@@ -21,7 +21,7 @@ class EdgeSet:
 
 	def intersects(self, edge: 'Edge'):
 		for x, y in set(self.neighbors(edge.node1) + self.neighbors(edge.node2)):
-			for other_edge in self.edges[x][y]:
+			for other_edge in self.edges[x][y]:#index out of range issues
 				if edge is not other_edge and edge.intersects(other_edge):
 					return True
 
@@ -35,8 +35,8 @@ class EdgeSet:
 		resized_1_y = self.resize(node1.y)
 		resized_2_x = self.resize(node2.x)
 		resized_2_y = self.resize(node2.y) 
-		existing_edges = self.edges[resized_1_x][resized_1_y]
-		existing_edges += self.edges[resized_2_x][resized_2_y]
+		existing_edges = self.edges[resized_1_x][resized_1_y]#index out of range issues
+		existing_edges += self.edges[resized_2_x][resized_2_y]#index out of range issues
 		for existing_edge in existing_edges:
 			if node2 == existing_edge.node1 and node1 == existing_edge.node2 or\
 				node2 == existing_edge.node2 and node1 == existing_edge.node1:
@@ -47,7 +47,7 @@ class EdgeSet:
 		resized_1_y = self.resize(edge.node1.y)
 		resized_2_x = self.resize(edge.node2.x)
 		resized_2_y = self.resize(edge.node2.y)
-		should_add = edge not in self.edges[resized_1_x][resized_1_y]
+		should_add = edge not in self.edges[resized_1_x][resized_1_y]#index out of range issues
 		if should_add:
 			self.edges[resized_1_x][resized_1_y].append(edge)
 			if resized_1_x != resized_2_x or resized_1_y != resized_2_y:
@@ -60,7 +60,7 @@ class EdgeSet:
 		resized_2_x = self.resize(edge.node2.x)
 		resized_2_y = self.resize(edge.node2.y)
 		removed = False
-		if edge in self.edges[resized_1_x][resized_1_y]:
+		if edge in self.edges[resized_1_x][resized_1_y]:#index out of range issues
 			self.edges[resized_1_y][resized_2_y].remove(edge)
 			removed = True
 		if edge in self.edges[resized_2_x][resized_2_y]:

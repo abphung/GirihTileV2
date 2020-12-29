@@ -24,7 +24,7 @@ class Polygon:
 				polygon_set.open_edges[edge] = self
 				self.ordered_nodes.append(edge.node1)
 			else:
-				polygon_set.open_edges.pop(edge)
+				polygon_set.open_edges.pop(edge)#error here try pop edge that doesn't exist
 				self.ordered_nodes.append(edge.node2)
 
 	@staticmethod
