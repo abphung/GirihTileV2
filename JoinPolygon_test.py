@@ -49,9 +49,10 @@ class JoinPolygonUnitTests(unittest.TestCase):
 		gettrace = getattr(sys, 'gettrace', None)
 		is_debug = gettrace is not None and gettrace()
 
+		tile_set = [Bowtie, Decagon, Hexagon, Pentagon, Rhombus]
 		node_set = NodeSet(100)
 		edge_set = EdgeSet(1000, 1000, node_set)
-		polygon_set = PolygonSet(node_set, edge_set)
+		polygon_set = PolygonSet(tile_set, node_set, edge_set)
 		polygons = [Polygon.create(polygon_types[0], polygon_set)]
 		renderingEngine = RenderingEngineMatplotlib(1000, 1000)
 		is_invalid_edge_present = False

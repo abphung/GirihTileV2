@@ -9,7 +9,7 @@ class RenderingEngineMatplotlib:
 
 	def draw(self, polygons):
 		my_dpi=96
-		plt.figure(figsize=(self.width/my_dpi, self.height/my_dpi), dpi=my_dpi)
+		plt.figure(figsize=(self.width/my_dpi/3, self.height/my_dpi/3), dpi=my_dpi)
 		plt.xlim([-self.width/2, self.width/2])
 		plt.ylim([-self.height/2, self.height/2])
 		for polygon in polygons:

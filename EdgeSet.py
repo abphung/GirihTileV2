@@ -6,12 +6,10 @@ class EdgeSet:
 		self.width = width
 		self.height = height
 		self.scale = node_set.scale
-		x_width = ceil(width/self.scale)
-		y_height = ceil(height/self.scale)
-		self.edges = [[[] for x in range(x_width)] for y in range(y_height)]
+		self.edges = {}
 
 	def neighbors(self, node: 'Node'):
-		x, y = self.resize(node.x), self.resize(node.y)
+		x, y = self.get_coords(node)
 		locations = [(x, y)]
 		locations.append((x - 1, y))
 		locations.append((x + 1, y))
@@ -20,50 +18,53 @@ class EdgeSet:
 		return locations
 
 	def intersects(self, edge: 'Edge'):
-		for x, y in set(self.neighbors(edge.node1) + self.neighbors(edge.node2)):
-			for other_edge in self.edges[x][y]:#index out of range issues
-				if edge is not other_edge and edge.intersects(other_edge):
-					return True
-
+		for coords in set(self.neighbors(edge.node1) + self.neighbors(edge.node2)):
+			if coords in self.edges.keys():
+				for other_edge in self.edges[coords]:
+					if edge is not other_edge and edge.intersects(other_edge):
+						return True
 		return False
 
-	def resize(self, value: int) -> int:
-		return floor(value/self.scale)
+	def get_coords(self, node: 'Node') -> (int, int):
+		return (floor(node.x/self.scale), floor(node.y/self.scale))
 
 	def try_get(self, node1: 'Node', node2: 'Node'):
-		resized_1_x = self.resize(node1.x)
-		resized_1_y = self.resize(node1.y)
-		resized_2_x = self.resize(node2.x)
-		resized_2_y = self.resize(node2.y) 
-		existing_edges = self.edges[resized_1_x][resized_1_y]#index out of range issues
-		existing_edges += self.edges[resized_2_x][resized_2_y]#index out of range issues
+		node1_coords = self.get_coords(node1)
+		if node1_coords not in self.edges.keys():
+			return None
+		node2_coords = self.get_coords(node2)
+		if node2_coords not in self.edges.keys():
+			return None
+		existing_edges = self.edges[node1_coords] + self.edges[node2_coords]
 		for existing_edge in existing_edges:
 			if node2 == existing_edge.node1 and node1 == existing_edge.node2 or\
 				node2 == existing_edge.node2 and node1 == existing_edge.node1:
 				return existing_edge
 
 	def try_add(self, edge: 'Edge'):
-		resized_1_x = self.resize(edge.node1.x)
-		resized_1_y = self.resize(edge.node1.y)
-		resized_2_x = self.resize(edge.node2.x)
-		resized_2_y = self.resize(edge.node2.y)
-		should_add = edge not in self.edges[resized_1_x][resized_1_y]#index out of range issues
+		node1_coords = self.get_coords(edge.node1)
+		if node1_coords not in self.edges.keys():
+			self.edges[node1_coords] = []
+		node2_coords = self.get_coords(edge.node2)
+		if node2_coords not in self.edges.keys():
+			self.edges[node2_coords] = []
+		should_add = edge not in self.edges[self.get_coords(edge.node1)]
 		if should_add:
-			self.edges[resized_1_x][resized_1_y].append(edge)
-			if resized_1_x != resized_2_x or resized_1_y != resized_2_y:
-				self.edges[resized_2_x][resized_2_y].append(edge)
+			self.edges[node1_coords].append(edge)
+			node2_coords = self.get_coords(edge.node2)
+			if self.get_coords(edge.node1) != node2_coords and \
+				edge not in self.edges[self.get_coords(edge.node2)]:
+				self.edges[node2_coords].append(edge)
 		return should_add
 
 	def try_remove(self, edge: 'Edge'):
-		resized_1_x = self.resize(edge.node1.x)
-		resized_1_y = self.resize(edge.node1.y)
-		resized_2_x = self.resize(edge.node2.x)
-		resized_2_y = self.resize(edge.node2.y)
 		removed = False
-		if edge in self.edges[resized_1_x][resized_1_y]:#index out of range issues
-			self.edges[resized_1_y][resized_2_y].remove(edge)
+		node1_coords = self.get_coords(edge.node1)
+		if node1_coords in self.edges.keys() and edge in self.edges[node1_coords]:
+			self.edges[node1_coords].remove(edge)
 			removed = True
-		if edge in self.edges[resized_2_x][resized_2_y]:
-			self.edges[resized_2_x][resized_2_y].remove(edge)
+		node2_coords = self.get_coords(edge.node2)
+		if node2_coords in self.edges.keys() and edge in self.edges[node2_coords]:
+			self.edges[node2_coords].remove(edge)
 			removed = True
 		return removed

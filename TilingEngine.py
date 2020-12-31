@@ -1,5 +1,5 @@
 from random import choice, shuffle
-from PolygonTypes import *
+from Polygon import Polygon
 from NodeSet import NodeSet
 from EdgeSet import EdgeSet
 from PolygonSet import PolygonSet
@@ -13,15 +13,14 @@ class TilingEngine:
 	# Constructs a graph of vertices and edges of type Polygon and Edge 
 	# respectivly.
 	@staticmethod
-	def tile(tile_count, tile_set = [Bowtie, Decagon, Hexagon, Pentagon, Rhombus], radial_placement = True):
+	def tile(tile_count, tile_set, radial_placement = True):
 		node_set = NodeSet(100)
 		edge_set = EdgeSet(1000, 1000, node_set)
-		polygon_set = PolygonSet(node_set, edge_set)
+		polygon_set = PolygonSet(tile_set, node_set, edge_set)
 		
 		InitPolygonType = choice(tile_set)
 		polygons = [Polygon.create(InitPolygonType, polygon_set)]
-		for i in range(tile_count - len(polygons)):
-			print(i)
+		for _ in range(tile_count - len(polygons)):
 			cur_edge = polygon_set.get_random_open_edge()
 			#possible to switch next line with generator function?
 			possibilities = [(PolygonType, i) for PolygonType in tile_set for i in range(len(PolygonType.angles))]

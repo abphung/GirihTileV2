@@ -14,3 +14,9 @@ class Pentagon(Polygon):
 
 class Rhombus(Polygon):
 	angles = [72, 108, 72, 108]
+
+class Domino(Polygon):
+	angles = [90, 180, 90, 90, 180, 90]
+
+class Diamond(Polygon):
+	angles = [60, 120, 60, 120]

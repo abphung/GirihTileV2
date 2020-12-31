@@ -20,12 +20,25 @@ class Polygon:
 		for edge in valid_edges:
 			node_set.add(edge.node1)
 			node_set.add(edge.node2)
-			if edge_set.try_add(edge):
+			# if edge_set.try_add(edge):
+			# 	polygon_set.open_edges[edge] = self
+			# 	self.ordered_nodes.append(edge.node1)
+			# else:
+			# 	if edge in polygon_set.open_edges:
+			# 		polygon_set.open_edges.pop(edge)
+			# 		polygon_set.pop_source[edge] = type(self)
+			# 	elif edge in polygon_set.pop_source:
+			# 		print("when adding ", type(self), "edge popped already by", polygon_set.pop_source[edge])
+			# 	else:
+			# 		print("edge was never in open edges and wasn't already popped")
+			# 	self.ordered_nodes.append(edge.node2)
+			if edge in polygon_set.open_edges:
+				polygon_set.open_edges.pop(edge)
+				self.ordered_nodes.append(edge.node2)
+			else:
+				edge_set.try_add(edge)
 				polygon_set.open_edges[edge] = self
 				self.ordered_nodes.append(edge.node1)
-			else:
-				polygon_set.open_edges.pop(edge)#error here try pop edge that doesn't exist
-				self.ordered_nodes.append(edge.node2)
 
 	@staticmethod
 	def place(PolygonType, starting_edge, start_index, polygon_set: 'PolygonSet', allow_collisions = False):
@@ -42,20 +55,22 @@ class Polygon:
 			new_relative_angle = (cur_relative_angle + 180 + angle_abs_value)%360
 			angle_range = ((cur_relative_angle + 180)%360, new_relative_angle)
 			#validate
-			edge_angle_intersects, node_resultant_angle_too_small, edge_intersects = False, False, False
+			edge_angle_intersects, node_resultant_angle_too_small, edge_intersects, edge_is_not_open = False, False, False, False
 
 			#check valid node. if new node it is always valid
 			_, new_node = Node.create(new_relative_angle, cur_node, node_set)
 			if node_set.try_get(cur_node.x, cur_node.y):
 				edge_angle_intersects = cur_node.intersects(new_relative_angle)
-				node_resultant_angle_too_small = 0 < cur_node.min_gap(*angle_range) < 72
+				node_resultant_angle_too_small = 0 < cur_node.min_gap(*angle_range) < polygon_set.min_angle
 
 			#check valid edge. If it is an existing edge it is always valid
 			is_new_edge, new_edge = Edge.create(cur_node, new_node, edge_set)
 			if is_new_edge:
 				edge_intersects = edge_set.intersects(new_edge)
+			else:
+				edge_is_not_open = new_edge not in polygon_set.open_edges
 
-			if edge_intersects or edge_angle_intersects or node_resultant_angle_too_small:
+			if edge_intersects or edge_angle_intersects or node_resultant_angle_too_small or edge_is_not_open:
 				#do not combine condition check with line above so we can set breakpoint in here
 				if not allow_collisions:
 					for operation, argument in reverse_on_failure:
