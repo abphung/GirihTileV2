@@ -20,18 +20,6 @@ class Polygon:
 		for edge in valid_edges:
 			node_set.add(edge.node1)
 			node_set.add(edge.node2)
-			# if edge_set.try_add(edge):
-			# 	polygon_set.open_edges[edge] = self
-			# 	self.ordered_nodes.append(edge.node1)
-			# else:
-			# 	if edge in polygon_set.open_edges:
-			# 		polygon_set.open_edges.pop(edge)
-			# 		polygon_set.pop_source[edge] = type(self)
-			# 	elif edge in polygon_set.pop_source:
-			# 		print("when adding ", type(self), "edge popped already by", polygon_set.pop_source[edge])
-			# 	else:
-			# 		print("edge was never in open edges and wasn't already popped")
-			# 	self.ordered_nodes.append(edge.node2)
 			if edge in polygon_set.open_edges:
 				polygon_set.open_edges.pop(edge)
 				self.ordered_nodes.append(edge.node2)

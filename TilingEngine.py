@@ -20,10 +20,13 @@ class TilingEngine:
 		
 		InitPolygonType = choice(tile_set)
 		polygons = [Polygon.create(InitPolygonType, polygon_set)]
+
+		possibilities = [(PolygonType, i) for PolygonType in tile_set for i in range(len(PolygonType.angles))]
+
 		for _ in range(tile_count - len(polygons)):
 			cur_edge = polygon_set.get_random_open_edge()
 			#possible to switch next line with generator function?
-			possibilities = [(PolygonType, i) for PolygonType in tile_set for i in range(len(PolygonType.angles))]
+			
 			shuffle(possibilities)
 			for possibility in possibilities:
 				NewPolygonType, start_index = possibility
@@ -32,5 +35,6 @@ class TilingEngine:
 					polygons.append(NewPolygonType(valid_new_edges, polygon_set))
 					break
 
-			polygon_set.remove_polygon_ref_by_edge(cur_edge)
+			polygon_set.remove_polygon(edge=cur_edge)
+
 		return polygons
