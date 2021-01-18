@@ -21,7 +21,7 @@ class Polygon:
 			node_set.add(edge.node1)
 			node_set.add(edge.node2)
 			if edge in polygon_set.open_edges:
-				polygon_set.open_edges.pop(edge)
+				polygon_set.hide(edge)
 				self.ordered_nodes.append(edge.node2)
 			else:
 				edge_set.try_add(edge)
@@ -68,7 +68,7 @@ class Polygon:
 			cur_node.closed_angles.append(angle_range)
 			reverse_on_failure.append((cur_node.closed_angles.remove, angle_range))
 			
-			valid_edges.append(new_edge) 
+			valid_edges.append(new_edge)
 
 			cur_relative_angle = new_relative_angle
 			cur_node = new_node

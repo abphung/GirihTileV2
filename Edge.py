@@ -16,6 +16,7 @@ class Edge:
 		self.node2 = node2
 		self.color = None
 		self.relative_angle = round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)))%360
+		self.reverse_relative_angle = round(degrees(atan2(self.node1.y - self.node2.y, self.node1.x - self.node2.x)) + 180)%360
 
 	# https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
 	@staticmethod
@@ -31,7 +32,8 @@ class Edge:
 		return does_intersect
 
 	#this will try to remove angle twice. we only need to remove one node per edge??
-	def try_remove_nodes(self, angles_to_remove):
+	def try_remove_nodes(self, angles_to_remove) -> 'Node':
+		removed_node = None
 		if self.node1 in angles_to_remove.keys():
 			if (self.relative_angle, angles_to_remove[self.node1]) in self.node1.closed_angles:
 				self.node1.closed_angles.remove((self.relative_angle, angles_to_remove[self.node1]))

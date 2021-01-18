@@ -32,5 +32,10 @@ class PolygonSetUnitTests(unittest.TestCase):
 			self.assertEqual(len(node_set.locations), 0)
 			self.assertEqual(len(edge_set.edges.keys()), 0)
 
+	def test_remove_decagon_decagon(self):
+		# polygon_set = TilingEngine.Produce(Decagon).with_child(Decagon)
+		# polygon_set.remove_polygon(polygon_set.root)
+		pass
+
 if __name__ == '__main__':
 	unittest.main()

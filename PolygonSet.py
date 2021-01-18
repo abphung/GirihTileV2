@@ -1,5 +1,5 @@
 from random import choice
-from collections import OrderedDict 
+from collections import OrderedDict, defaultdict
 
 class PolygonSet:
 
@@ -8,6 +8,7 @@ class PolygonSet:
         self.node_set = node_set
         self.edge_set = edge_set
         self.open_edges = OrderedDict()
+        self.hidden_open_edge = {}
         self.children_of = {}
         self.parent_of = {}
 
@@ -28,12 +29,26 @@ class PolygonSet:
             self.children_of.pop(polygon)
         
         #remove self
-        angles_to_remove = {}
+        closed_angles_to_remove = defaultdict(list)
         for edge in polygon.edges:
             if edge in self.open_edges.keys():
                 self.open_edges.pop(edge)
-            self.edge_set.try_remove(edge)
-            edge.try_remove_nodes(angles_to_remove)
+                self.edge_set.try_remove(edge)
+
+                closed_angles_to_remove[edge.node2].append(edge.relative_angle)
+                closed_angles_to_remove[edge.node1].append(edge.reverse_relative_angle)
+            else:
+                self.unhide(edge)
+
+                closed_angles_to_remove[edge.node1].append(edge.relative_angle)
+                closed_angles_to_remove[edge.node2].append(edge.reverse_relative_angle)
+
+        for node in closed_angles_to_remove.keys():
+            if len(node.closed_angles) == 1:
+                self.node_set.remove(node)
+            else:
+                node.closed_angles.remove(closed_angles_to_remove[node])
+                
         #remove child parent relationship if not root
         if polygon in self.parent_of:
             self.parent_of.pop(polygon)  
@@ -45,3 +60,11 @@ class PolygonSet:
             self.children_of[parent].append(child)
 
         self.parent_of[child] = parent
+
+    def hide(self, edge: 'Edge'):
+        self.hidden_open_edge[edge] = self.open_edges[edge]
+        self.open_edges.pop(edge)
+
+    def unhide(self, edge: 'Edge'):
+        self.open_edges[edge] = self.hidden_open_edge[edge]
+        self.hidden_open_edge.pop(edge)

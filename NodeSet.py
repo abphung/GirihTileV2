@@ -16,3 +16,7 @@ class NodeSet:
 	def add(self, node: 'Node'):
 		self.locations.add((node.x, node.y))
 		self.nodes[(node.x, node.y)] = node
+
+	def remove(self, node: 'Node'):
+		self.locations.remove((node.x, node.y))
+		self.nodes.pop((node.x, node.y))
