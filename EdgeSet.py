@@ -62,9 +62,13 @@ class EdgeSet:
 		node1_coords = self.get_coords(edge.node1)
 		if node1_coords in self.edges.keys() and edge in self.edges[node1_coords]:
 			self.edges[node1_coords].remove(edge)
+			if len(self.edges[node1_coords]) == 0:
+				self.edges.pop(node1_coords)
 			removed = True
 		node2_coords = self.get_coords(edge.node2)
 		if node2_coords in self.edges.keys() and edge in self.edges[node2_coords]:
 			self.edges[node2_coords].remove(edge)
+			if len(self.edges[node2_coords]) == 0:
+				self.edges.pop(node2_coords)
 			removed = True
 		return removed

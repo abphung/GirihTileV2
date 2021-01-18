@@ -30,14 +30,21 @@ class Edge:
 
 		return does_intersect
 
+	#this will try to remove angle twice. we only need to remove one node per edge??
 	def try_remove_nodes(self, angles_to_remove):
 		if self.node1 in angles_to_remove.keys():
-			self.node1.closed_angles.remove(self.relative_angle, angles_to_remove[self.node1])
+			if (self.relative_angle, angles_to_remove[self.node1]) in self.node1.closed_angles:
+				self.node1.closed_angles.remove((self.relative_angle, angles_to_remove[self.node1]))
+			else:
+				print("node1", (self.relative_angle, angles_to_remove[self.node1]), self.node1.closed_angles)
 		else:
 			angles_to_remove[self.node1] = self.relative_angle
 		reversed_angle = (self.relative_angle + 180)%360
 		if self.node2 in angles_to_remove.keys():
-			self.node2.closed_angles.remove(reversed_angle, angles_to_remove[self.node2])
+			if (angles_to_remove[self.node2], reversed_angle) in self.node2.closed_angles:
+				self.node2.closed_angles.remove((angles_to_remove[self.node2], reversed_angle))
+			else:
+				print("node2", (reversed_angle, angles_to_remove[self.node2]), self.node2.closed_angles)
 		else:
 			angles_to_remove[self.node2] = reversed_angle
 

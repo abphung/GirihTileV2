@@ -68,7 +68,7 @@ class Polygon:
 			cur_node.closed_angles.append(angle_range)
 			reverse_on_failure.append((cur_node.closed_angles.remove, angle_range))
 			
-			valid_edges.append(new_edge)
+			valid_edges.append(new_edge) 
 
 			cur_relative_angle = new_relative_angle
 			cur_node = new_node

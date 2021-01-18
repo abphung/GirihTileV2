@@ -12,10 +12,10 @@ class PolygonSet:
         self.parent_of = {}
 
     def get_random_open_edge(self):
-        return choice(self.open_edges)
+        return choice(list(self.open_edges.keys()))
 
     def get_fifo_open_edge(self):
-        return self.open_edges[0]
+        return next(iter(self.open_edges))
 
     def remove_polygon(self, edge: 'Edge' = None, polygon: 'Polygon' = None):
         if edge != None:
@@ -25,7 +25,7 @@ class PolygonSet:
         if polygon in self.children_of:
             for child in self.children_of[polygon]:
                 self.remove_polygon(polygon=child)
-        self.children_of.pop(polygon)
+            self.children_of.pop(polygon)
         
         #remove self
         angles_to_remove = {}
@@ -34,7 +34,9 @@ class PolygonSet:
                 self.open_edges.pop(edge)
             self.edge_set.try_remove(edge)
             edge.try_remove_nodes(angles_to_remove)
-        self.parent_of.pop(polygon)  
+        #remove child parent relationship if not root
+        if polygon in self.parent_of:
+            self.parent_of.pop(polygon)  
 
     def add_parent_child(self, parent: 'Polygon', child: 'Polygon'):
         if parent not in self.children_of.keys():

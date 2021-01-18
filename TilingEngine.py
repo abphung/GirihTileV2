@@ -35,6 +35,6 @@ class TilingEngine:
 					polygons.append(NewPolygonType(valid_new_edges, polygon_set))
 					break
 
-			polygon_set.remove_polygon(edge=cur_edge)
+			#polygon_set.remove_polygon(edge=cur_edge)
 
 		return polygons
